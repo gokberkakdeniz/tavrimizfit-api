@@ -1,22 +1,38 @@
-import { doesNotMatch } from "assert";
 import dotenv from "dotenv";
 import mongoose from "mongoose";
-import User, { IUser } from "./models/User";
-import { login, register } from "./controllers/users";
+import express from "express";
+
+import * as userController from "./controllers/user";
 
 dotenv.config();
 
-mongoose.connect(process.env.DB_URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
+const app = express();
+
+mongoose
+  .connect(process.env.DB_URI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    useCreateIndex: true,
+  })
+  .then(() => {
+    console.log("connected to database");
+  })
+  .catch((err) => {
+    console.error("could not connect to database.");
+    console.error(err);
+    process.exit();
+  });
+
+app.use(express.json());
+app.set("port", process.env.PORT || 3000);
+
+app.post("/login", userController.login);
+app.post("/register", userController.register);
+
+app.listen(app.get("port"), () => {
+  console.log(
+    "app is running at http://localhost:%d in %s mode",
+    app.get("port"),
+    app.get("env")
+  );
 });
-
-export const db = mongoose.connection;
-
-db.on("error", console.error.bind(console, "connection error:"));
-db.once("open", () => {
-  console.log("!!!");
-});
-
-// register("hakan", "123456", "hakotest@test.com");
-// login("fiko", "123456");
