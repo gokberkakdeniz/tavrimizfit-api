@@ -1,6 +1,8 @@
+/* eslint-disable consistent-return */
 import { Request, Response } from "express";
 import jwt from "jsonwebtoken";
-import { IUser, UserRole } from "../models/User";
+import { ITokenPayload } from "../controllers/authController";
+import User, { IUser, UserRole } from "../models/User";
 
 export type Permission = UserRole | "anonymous";
 
@@ -13,7 +15,6 @@ const permit = (...roles: Permission[]) => (
   req: Request,
   res: Response,
   next: () => void
-  // eslint-disable-next-line consistent-return
 ): unknown => {
   const { authorization } = req.headers;
   if (roles.includes("anonymous") && !authorization) {
@@ -26,12 +27,24 @@ const permit = (...roles: Permission[]) => (
     jwt.verify(
       token,
       process.env.TOKEN_SECRET as string,
-      (err: Error, user: IUser): unknown => {
-        if (err || roles.includes(user.type)) {
+      (err: Error, payload: ITokenPayload): unknown => {
+        const { type, email } = payload;
+
+        if (err || !roles.includes(type)) {
           return res.status(403).send(ACCESS_DENIED_MESSAGE);
         }
 
-        return next();
+        User.findOne({ email })
+          .then((user: IUser) => {
+            req.user = user;
+            next();
+          })
+          .catch(() => {
+            res.status(500).send({
+              error: true,
+              message: "Bir hata meydana geldi.",
+            });
+          });
       }
     );
   } else {

@@ -4,7 +4,7 @@
   "main": "index.js",
   "private": true,
   "scripts": {
-    "start": "nodemon src/index.ts",
+    "start": "nodemon --exec ts-node -T src/index.ts",
     "build": "tsc --project ./"
   },
   "dependencies": {
