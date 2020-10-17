@@ -7,6 +7,7 @@ export type UserRole = typeof userRole[number];
 
 export interface IUser extends Document {
   name: string;
+  surname: string;
   email: string;
   password: string;
   type: UserRole;
