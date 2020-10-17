@@ -3,6 +3,7 @@ import mongoose from "mongoose";
 import express from "express";
 
 import * as userController from "./controllers/user";
+import permit from "./middlewares/permit";
 
 dotenv.config();
 
@@ -25,9 +26,8 @@ mongoose
 
 app.use(express.json());
 app.set("port", process.env.PORT || 3000);
-
-app.post("/login", userController.checkToken, userController.login);
-app.post("/register", userController.checkToken, userController.register);
+app.post("/login", permit("anonymous"), userController.login);
+app.post("/register", permit("anonymous"), userController.register);
 
 app.listen(app.get("port"), () => {
   console.log(
