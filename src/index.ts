@@ -2,7 +2,9 @@ import dotenv from "dotenv";
 import mongoose from "mongoose";
 import express from "express";
 
-import * as userController from "./controllers/user";
+import * as authController from "./controllers/authController";
+import * as userController from "./controllers/userController";
+
 import permit from "./middlewares/permit";
 
 dotenv.config();
@@ -26,8 +28,9 @@ mongoose
 
 app.use(express.json());
 app.set("port", process.env.PORT || 3000);
-app.post("/login", permit("anonymous"), userController.login);
-app.post("/register", permit("anonymous"), userController.register);
+app.post("/login", permit("anonymous"), authController.login);
+app.post("/register", permit("anonymous"), authController.register);
+app.post("/changeName", permit(), userController.changeName);
 
 app.listen(app.get("port"), () => {
   console.log(

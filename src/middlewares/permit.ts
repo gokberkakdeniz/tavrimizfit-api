@@ -16,10 +16,13 @@ const permit = (...roles: Permission[]) => (
   // eslint-disable-next-line consistent-return
 ): unknown => {
   const { authorization } = req.headers;
+  if (roles.includes("anonymous") && !authorization) {
+    return next();
+  }
   const isValidHeader = authorization?.startsWith("Bearer ") ?? false;
 
   if (isValidHeader) {
-    const token = authorization.substring(8);
+    const token = authorization.substring(7);
     jwt.verify(
       token,
       process.env.TOKEN_SECRET as string,

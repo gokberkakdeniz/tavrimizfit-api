@@ -6,17 +6,17 @@ const userRole = ["normal", "premium"] as const;
 export type UserRole = typeof userRole[number];
 
 export interface IUser extends Document {
-  username: string;
+  name: string;
   email: string;
   password: string;
   type: UserRole;
 }
 
 const userSchema = new Schema<IUser>({
-  username: {
+  name: {
     type: String,
-    minlength: [3, "Kullanıcı adınız 3 karakterden kısa olmamalı."],
-    maxlength: [20, "Kullanıcı adınız 20 karakterden uzun olmamalı."],
+    minlength: [7, "Adınız ve soyadınız toplam 7 karakterden kısa olmamalı."],
+    maxlength: [30, "Adınız ve soyadınız toplam 30 karakterden uzun olmamalı."],
     required: [true, "Lütfen kullanıcı adınızı giriniz."],
   },
   email: {
@@ -64,10 +64,10 @@ userSchema.pre("save", function (next) {
 const userModel = model<IUser>("User", userSchema);
 
 userSchema
-  .path("username")
+  .path("name")
   .validate(
-    (username: string) =>
-      userModel.countDocuments({ username }).then((count) => count === 0),
+    (name: string) =>
+      userModel.countDocuments({ name }).then((count) => count === 0),
     "Bu kullanıcı adı kullanılmaktadır."
   );
 

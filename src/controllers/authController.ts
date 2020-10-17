@@ -4,12 +4,14 @@ import jwt from "jsonwebtoken";
 import User, { IUser } from "../models/User";
 
 const generateToken = (
-  username: string,
+  email: string,
+  name: string,
   password: string,
   type: string
 ): string => {
   const data = {
-    username,
+    email,
+    name,
     password,
     type,
   };
@@ -20,21 +22,21 @@ const generateToken = (
 };
 
 export const login = (req: Request, res: Response): void => {
-  const { username, password, type } = req.body;
+  const { email, password } = req.body;
 
-  User.findOne({ username }, (err, user) => {
+  User.findOne({ email }, (err, user) => {
     if (err) throw err;
     if (!user) {
       res.send({
         error: true,
-        message: "Kullanıcı adı veya şifre geçersiz.",
+        message: "Email veya şifre geçersiz.",
       });
     } else {
       bcrypt
         .compare(password, user.password)
         .then((result) => {
           if (result) {
-            const token = generateToken(username, password, type);
+            const token = generateToken(email, password, user.name, user.type);
             res.send({
               error: false,
               message: null,
@@ -43,7 +45,7 @@ export const login = (req: Request, res: Response): void => {
           } else {
             res.send({
               error: true,
-              message: "Kullanıcı adı veya şifre geçersiz.",
+              message: "Email veya şifre geçersiz.",
             });
           }
         })
@@ -59,9 +61,9 @@ export const login = (req: Request, res: Response): void => {
 };
 
 export const register = (req: Request, res: Response): void => {
-  const { username, password, email } = req.body;
+  const { name, password, email } = req.body;
   const user: IUser = new User({
-    username,
+    name,
     password,
     email,
     type: "normal",
