@@ -15,13 +15,18 @@ export interface IUser extends Document {
 const userSchema = new Schema<IUser>({
   name: {
     type: String,
-    minlength: [7, "Adınız ve soyadınız toplam 7 karakterden kısa olmamalı."],
-    maxlength: [30, "Adınız ve soyadınız toplam 30 karakterden uzun olmamalı."],
-    required: [true, "Lütfen kullanıcı adınızı giriniz."],
+    maxlength: [30, "Adınız 30 karakterden uzun olmamalı."],
+    required: [true, "Lütfen adınızı giriniz."],
+  },
+  surname: {
+    type: String,
+    maxlength: [30, "Soyadınız 30 karakterden uzun olmamalı."],
+    required: [true, "Lütfen soyadınızı giriniz."],
   },
   email: {
     type: String,
     unique: true,
+    index: true,
     required: [true, "Lütfen eposta adresinizi giriniz."],
     validate: {
       validator: isEmail,
@@ -62,14 +67,6 @@ userSchema.pre("save", function (next) {
 });
 
 const userModel = model<IUser>("User", userSchema);
-
-userSchema
-  .path("name")
-  .validate(
-    (name: string) =>
-      userModel.countDocuments({ name }).then((count) => count === 0),
-    "Bu kullanıcı adı kullanılmaktadır."
-  );
 
 userSchema
   .path("email")
