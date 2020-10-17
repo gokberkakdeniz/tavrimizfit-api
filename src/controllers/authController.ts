@@ -1,18 +1,25 @@
 import { Response, Request } from "express";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import User, { IUser } from "../models/User";
+import User, { IUser, UserRole } from "../models/User";
+
+export interface ITokenPayload {
+  email: string;
+  name: string;
+  surname: string;
+  type: UserRole;
+}
 
 const generateToken = (
   email: string,
   name: string,
-  password: string,
-  type: string
+  surname: string,
+  type: UserRole
 ): string => {
-  const data = {
+  const data: ITokenPayload = {
     email,
     name,
-    password,
+    surname,
     type,
   };
   const token = jwt.sign(data, process.env.TOKEN_SECRET, {
@@ -23,47 +30,60 @@ const generateToken = (
 
 export const login = (req: Request, res: Response): void => {
   const { email, password } = req.body;
-
-  User.findOne({ email }, (err, user) => {
-    if (err) throw err;
-    if (!user) {
-      res.send({
-        error: true,
-        message: "Email veya şifre geçersiz.",
-      });
-    } else {
-      bcrypt
-        .compare(password, user.password)
-        .then((result) => {
-          if (result) {
-            const token = generateToken(email, password, user.name, user.type);
-            res.send({
-              error: false,
-              message: null,
-              token,
-            });
-          } else {
-            res.send({
-              error: true,
-              message: "Email veya şifre geçersiz.",
-            });
-          }
-        })
-        .catch((berr) => {
-          console.log(berr);
+  if (email === undefined || password === undefined) {
+    res.send({
+      error: true,
+      message: "Eposta ve şifre girilmeli.",
+    });
+  } else {
+    User.findOne({ email })
+      .then((user: IUser) => {
+        if (!user) {
           res.send({
             error: true,
-            message: "bir hata oluştu",
+            message: "Eposta veya şifre geçersiz.",
           });
+        } else {
+          bcrypt
+            .compare(password, user.password)
+            .then((result) => {
+              if (result) {
+                const { name, surname, type } = user;
+                const token = generateToken(email, name, surname, type);
+                res.send({
+                  error: false,
+                  message: null,
+                  token,
+                });
+              } else {
+                res.send({
+                  error: true,
+                  message: "Eposta veya şifre geçersiz.",
+                });
+              }
+            })
+            .catch(() => {
+              res.send({
+                error: true,
+                message: "Beklenmeyen bir hata oluştu",
+              });
+            });
+        }
+      })
+      .catch(() => {
+        res.send({
+          error: true,
+          message: "Beklenmeyen bir hata oluştu",
         });
-    }
-  });
+      });
+  }
 };
 
 export const register = (req: Request, res: Response): void => {
-  const { name, password, email } = req.body;
+  const { name, surname, password, email } = req.body;
   const user: IUser = new User({
     name,
+    surname,
     password,
     email,
     type: "normal",
@@ -74,8 +94,7 @@ export const register = (req: Request, res: Response): void => {
     .then(() => {
       res.send({
         error: false,
-        message:
-          "Hesabınız başarıyla oluşturuldu. Hesabınızı aktif hale getirmek için lütfen mail adresinizi kontrol ediniz.",
+        message: "Hesabınız başarıyla oluşturuldu.",
       });
     })
     .catch((err) => {
