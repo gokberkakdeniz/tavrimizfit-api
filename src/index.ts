@@ -30,7 +30,11 @@ app.use(express.json());
 app.set("port", process.env.PORT || 3000);
 app.post("/login", permit("anonymous"), authController.login);
 app.post("/register", permit("anonymous"), authController.register);
-app.post("/changeName", permit(), userController.changeName);
+app.post(
+  "/profile/details",
+  permit("normal", "premium"),
+  userController.updateDetails
+);
 
 app.listen(app.get("port"), () => {
   console.log(

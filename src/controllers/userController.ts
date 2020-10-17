@@ -1,20 +1,20 @@
 import { Response, Request } from "express";
-import jwt from "jsonwebtoken";
-import User, { IUser } from "../models/User";
 
 // eslint-disable-next-line import/prefer-default-export
-export const changeName = (req: Request, res: Response): void => {
-  // const { name,  } = req.body;
-  const { authorization } = req.headers;
-  const token = authorization.substring[7];
-  // console.log(token); burda token alamıyorum kardeşim
-
-  jwt.verify(
-    token,
-    process.env.TOKEN_SECRET as string,
-    (err: Error, user: IUser): void => {
-      console.log(user);
-      res.send();
-    }
-  );
+export const updateDetails = (req: Request, res: Response): void => {
+  const { name, surname } = req.body;
+  req.user
+    .updateOne({ name, surname })
+    .then(() => {
+      res.send({
+        error: false,
+        message: "Adınız ve soyadınız başarıyla güncellendi.",
+      });
+    })
+    .catch(() => {
+      res.send({
+        error: true,
+        message: "Beklenmeyen bir hata oluştu...",
+      });
+    });
 };
