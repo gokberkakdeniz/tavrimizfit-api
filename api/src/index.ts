@@ -26,8 +26,8 @@ mongoose
 app.use(express.json());
 app.set("port", process.env.PORT || 3000);
 
-app.post("/login", userController.login);
-app.post("/register", userController.register);
+app.post("/login", userController.checkToken, userController.login);
+app.post("/register", userController.checkToken, userController.register);
 
 app.listen(app.get("port"), () => {
   console.log(

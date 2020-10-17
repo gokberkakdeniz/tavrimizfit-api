@@ -1,9 +1,26 @@
 import { Response, Request } from "express";
 import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
 import User, { IUser } from "../models/User";
 
+const generateToken = (
+  username: string,
+  password: string,
+  type: string
+): string => {
+  const data = {
+    username,
+    password,
+    type,
+  };
+  const token = jwt.sign(data, process.env.TOKEN_SECRET, {
+    expiresIn: "1800s",
+  });
+  return token;
+};
+
 export const login = (req: Request, res: Response): void => {
-  const { username, password } = req.body;
+  const { username, password, type } = req.body;
 
   User.findOne({ username }, (err, user) => {
     if (err) throw err;
@@ -17,10 +34,11 @@ export const login = (req: Request, res: Response): void => {
         .compare(password, user.password)
         .then((result) => {
           if (result) {
+            const token = generateToken(username, password, type);
             res.send({
               error: false,
               message: null,
-              token: null,
+              token,
             });
           } else {
             res.send({
@@ -64,4 +82,17 @@ export const register = (req: Request, res: Response): void => {
         message: err.message,
       });
     });
+};
+
+export const checkToken = (
+  req: Request,
+  res: Response,
+  next: () => void
+): Response => {
+  const authHeader = req.headers.authorization;
+  const token = authHeader && authHeader.split(" ")[1];
+
+  if (token != null) return res.sendStatus(403);
+  next();
+  return res;
 };
