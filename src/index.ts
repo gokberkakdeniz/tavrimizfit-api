@@ -4,6 +4,7 @@ import express from "express";
 
 import * as authController from "./controllers/authController";
 import * as userController from "./controllers/userController";
+import * as recipeController from "./controllers/recipeController";
 
 import permit from "./middlewares/permit";
 
@@ -30,11 +31,13 @@ app.use(express.json());
 app.set("port", process.env.PORT || 3000);
 app.post("/login", permit("anonymous"), authController.login);
 app.post("/register", permit("anonymous"), authController.register);
-app.post(
+app.patch(
   "/profile/details",
   permit("normal", "premium"),
   userController.updateDetails
 );
+app.post("/recipes", permit("normal", "premium"), recipeController.addRecipe);
+app.get("/recipes", permit("normal", "premium"), recipeController.getRecipes);
 
 app.listen(app.get("port"), () => {
   console.log(
