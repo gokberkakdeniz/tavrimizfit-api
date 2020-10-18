@@ -1,4 +1,5 @@
 import { Document, model, Schema } from "mongoose";
+import $ from "../messages";
 
 export interface IRecipe extends Document {
   title: string;
@@ -11,8 +12,7 @@ export interface IRecipe extends Document {
 const recipeSchema = new Schema<IRecipe>({
   title: {
     type: String,
-    maxlength: [30, "Tarif ismi 30 karakterden uzun olmamalı."],
-    required: [true, "Lütfen başlığı giriniz."],
+    required: [true, $("validations.missing_info", { name: "başlığı" })],
   },
   tags: {
     type: [String],
@@ -20,12 +20,11 @@ const recipeSchema = new Schema<IRecipe>({
   },
   description: {
     type: String,
-    maxlength: [30, "Tarifiniz 30 karakterden uzun olmamalı."],
-    required: [true, "Lütfen tarif giriniz."],
+    required: [true, $("validations.missing_info", { name: "tarifi" })],
   },
   ingredients: {
     type: [String],
-    required: [true, "Lütfen malzemeleri giriniz."],
+    required: [true, $("validations.missing_info", { name: "malzemeleri" })],
   },
   calorie: {
     type: String,
