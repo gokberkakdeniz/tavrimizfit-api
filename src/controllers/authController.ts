@@ -2,6 +2,7 @@ import { Response, Request } from "express";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import User, { IUser, UserRole } from "../models/User";
+import $ from "../messages";
 
 export interface ITokenPayload {
   email: string;
@@ -33,7 +34,7 @@ export const login = (req: Request, res: Response): void => {
   if (email === undefined || password === undefined) {
     res.send({
       error: true,
-      message: "Eposta ve şifre girilmeli.",
+      message: $("validations.missing_email_or_name"),
     });
   } else {
     User.findOne({ email })
@@ -41,7 +42,7 @@ export const login = (req: Request, res: Response): void => {
         if (!user) {
           res.send({
             error: true,
-            message: "Eposta veya şifre geçersiz.",
+            message: $("validations.invalid_email_or_name"),
           });
         } else {
           bcrypt
@@ -52,20 +53,20 @@ export const login = (req: Request, res: Response): void => {
                 const token = generateToken(email, name, surname, type);
                 res.send({
                   error: false,
-                  message: null,
+                  message: $("success"),
                   token,
                 });
               } else {
                 res.send({
                   error: true,
-                  message: "Eposta veya şifre geçersiz.",
+                  message: $("validations.invalid_email_or_name"),
                 });
               }
             })
             .catch(() => {
               res.send({
                 error: true,
-                message: "Beklenmeyen bir hata oluştu",
+                message: $("errors.unexpected"),
               });
             });
         }
@@ -73,7 +74,7 @@ export const login = (req: Request, res: Response): void => {
       .catch(() => {
         res.send({
           error: true,
-          message: "Beklenmeyen bir hata oluştu",
+          message: $("errors.unexpected"),
         });
       });
   }
@@ -94,13 +95,13 @@ export const register = (req: Request, res: Response): void => {
     .then(() => {
       res.send({
         error: false,
-        message: "Hesabınız başarıyla oluşturuldu.",
+        message: $("success.added"),
       });
     })
-    .catch((err) => {
+    .catch(() => {
       res.send({
         error: true,
-        message: err.message,
+        message: $("errors.unexpected"),
       });
     });
 };

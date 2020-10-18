@@ -1,5 +1,6 @@
 import { Document, model, Schema } from "mongoose";
 import { UserRole } from "./User";
+import $ from "../messages";
 
 export interface ITraining extends Document {
   title: string;
@@ -12,12 +13,11 @@ export interface ITraining extends Document {
 const trainingSchema = new Schema<ITraining>({
   title: {
     type: String,
-    maxlength: [30, "Başlık 100 karakterden uzun olmamalı."],
-    required: [true, "Lütfen başlığı giriniz."],
+    required: [true, $("validations.missing_info", { name: "başlık" })],
   },
   description: {
     type: String,
-    required: [true, "Lütfen tarif giriniz."],
+    required: [true, $("validations.missing_info", { name: "tarif" })],
   },
   tags: {
     type: [String],

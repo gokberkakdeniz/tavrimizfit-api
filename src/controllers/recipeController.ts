@@ -1,5 +1,6 @@
 import { Response, Request } from "express";
 import Recipe, { IRecipe } from "../models/Recipe";
+import $ from "../messages";
 
 export const getRecipes = async (
   req: Request,
@@ -23,13 +24,13 @@ export const addRecipe = (req: Request, res: Response): void => {
     .then(() => {
       res.send({
         error: false,
-        message: "Tarif başarıyla oluşturuldu.",
+        message: $("success.added"),
       });
     })
-    .catch((err) => {
+    .catch(() => {
       res.send({
         error: true,
-        message: err.message,
+        message: $("errors.unexpected"),
       });
     });
 };

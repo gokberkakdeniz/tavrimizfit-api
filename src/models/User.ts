@@ -1,6 +1,7 @@
 import { Document, model, Schema } from "mongoose";
 import { validate as isEmail } from "email-validator";
 import bcrypt from "bcrypt";
+import $ from "../messages";
 
 const userRole = ["normal", "premium"] as const;
 export type UserRole = typeof userRole[number];
@@ -16,30 +17,45 @@ export interface IUser extends Document {
 const userSchema = new Schema<IUser>({
   name: {
     type: String,
-    maxlength: [30, "Adınız 30 karakterden uzun olmamalı."],
-    required: [true, "Lütfen adınızı giriniz."],
+    maxlength: [
+      30,
+      $("validations.max_length", { length: 30, name: "İsminiz" }),
+    ],
+    required: [true, $("validations.missing_info", { name: "isminizi" })],
   },
   surname: {
     type: String,
-    maxlength: [30, "Soyadınız 30 karakterden uzun olmamalı."],
-    required: [true, "Lütfen soyadınızı giriniz."],
+    maxlength: [
+      30,
+      $("validations.max_length", { length: 30, name: "Soyadınız" }),
+    ],
+    required: [true, $("validations.missing_info", { name: "soyadınızı" })],
   },
   email: {
     type: String,
     unique: true,
     index: true,
-    required: [true, "Lütfen eposta adresinizi giriniz."],
+    required: [
+      true,
+      $("validations.missing_info", { name: "email adresinizi" }),
+    ],
     validate: {
       validator: isEmail,
-      message: "Lütfen geçerli eposta adresi giriniz.",
+      message: $("validations.missing_info", { name: "geçerli Eposta adresi" }),
       isAsync: false,
     },
   },
   password: {
     type: String,
-    minlength: [8, "Şifreniz 8 karakterden kısa olmamalı."],
-    maxlength: [30, "Şifreniz 30 karakterden uzun olmamalı."],
-    required: [true, "Lütfen şifrenizi giriniz."],
+    minlength: [
+      8,
+      $("validations.min_length", { length: 8, name: "Şifreniz" }),
+    ],
+    maxlength: [
+      30,
+      $("validations.max_length", { length: 30, name: "Şifreniz" }),
+    ],
+    required: [true, $("validations.missing_info", { name: "şifrenizi" })],
   },
   type: {
     type: String,
@@ -74,7 +90,7 @@ userSchema
   .validate(
     (email: string) =>
       userModel.countDocuments({ email }).then((count) => count === 0),
-    "Bu eposta adresi kullanılmaktadır."
+    $("validations.must_be_unique", { name: "eposta adresi" })
   );
 
 export default userModel;

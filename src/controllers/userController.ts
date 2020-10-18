@@ -1,4 +1,5 @@
 import { Response, Request } from "express";
+import $ from "../messages";
 
 // eslint-disable-next-line import/prefer-default-export
 export const updateDetails = (req: Request, res: Response): void => {
@@ -8,13 +9,13 @@ export const updateDetails = (req: Request, res: Response): void => {
     .then(() => {
       res.send({
         error: false,
-        message: "Adınız ve soyadınız başarıyla güncellendi.",
+        message: $("success.updated"),
       });
     })
     .catch(() => {
       res.send({
         error: true,
-        message: "Beklenmeyen bir hata oluştu...",
+        message: $("errors.unexpected"),
       });
     });
 };
