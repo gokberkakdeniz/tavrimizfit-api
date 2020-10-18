@@ -21,7 +21,7 @@ const userSchema = new Schema<IUser>({
       30,
       $("validations.max_length", { length: 30, name: "İsminiz" }),
     ],
-    required: [true, $("validations.missing_info", { name: "isminizi" })],
+    required: [true, $("validations.required_info", { name: "isminizi" })],
   },
   surname: {
     type: String,
@@ -29,7 +29,7 @@ const userSchema = new Schema<IUser>({
       30,
       $("validations.max_length", { length: 30, name: "Soyadınız" }),
     ],
-    required: [true, $("validations.missing_info", { name: "soyadınızı" })],
+    required: [true, $("validations.required_info", { name: "soyadınızı" })],
   },
   email: {
     type: String,
@@ -37,11 +37,13 @@ const userSchema = new Schema<IUser>({
     index: true,
     required: [
       true,
-      $("validations.missing_info", { name: "email adresinizi" }),
+      $("validations.required_info", { name: "email adresinizi" }),
     ],
     validate: {
       validator: isEmail,
-      message: $("validations.missing_info", { name: "geçerli Eposta adresi" }),
+      message: $("validations.required_info", {
+        name: "geçerli Eposta adresi",
+      }),
       isAsync: false,
     },
   },
@@ -55,7 +57,7 @@ const userSchema = new Schema<IUser>({
       30,
       $("validations.max_length", { length: 30, name: "Şifreniz" }),
     ],
-    required: [true, $("validations.missing_info", { name: "şifrenizi" })],
+    required: [true, $("validations.required_info", { name: "şifrenizi" })],
   },
   type: {
     type: String,

@@ -8,12 +8,14 @@ const messages = {
   "errors.unexpected": "Beklemeyen bir hata oluştu.",
   "errors.access_denied": "Erişim reddedildi.",
   "validations.invalid_email_or_name": "Eposta veya şifre geçersiz.",
-  "validations.missing_info": ({ name }: MessageParams) =>
+  "validations.required_info": ({ name }: MessageParams) =>
     `Lütfen ${name} giriniz.`,
   "validations.max_length": ({ name, length }: MessageParams) =>
     `${name} ${length} karakterden uzun olmamalı.`,
   "validations.min_length": ({ name, length }: MessageParams) =>
     `${name} ${length} karakterden kısa olmamalı.`,
+  "validations.must_be_unique": ({ name }: MessageParams) =>
+    `Bu ${name} kullanılmaktadır.`,
   "success.updated": "Başarıyla güncellendi.",
   "success.added": "Başarıyla eklendi.",
   "success.removed": "Başarıyla silindi.",
