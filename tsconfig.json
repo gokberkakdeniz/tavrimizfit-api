@@ -9,7 +9,6 @@
     "lib": ["es6"],
     "esModuleInterop": true
   },
-  "include": ["src/**/*.ts"],
-  "files": ["src/index.d.ts"],
+  "include": ["src/**/*.ts", "src/typings/*"],
   "exclude": ["node_modules"]
 }
