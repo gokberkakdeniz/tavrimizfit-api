@@ -27,6 +27,8 @@ mongoose
     process.exit();
   });
 
+mongoose.set("runValidators", true);
+
 app.use(express.json());
 app.set("port", process.env.PORT || 3000);
 app.post("/login", permit("anonymous"), authController.login);
