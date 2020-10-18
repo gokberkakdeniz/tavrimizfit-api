@@ -8,7 +8,7 @@ const messages = {
   "errors.unexpected": "Beklemeyen bir hata oluştu.",
   "errors.access_denied": "Erişim reddedildi.",
   "validations.invalid_email_or_name": "Eposta veya şifre geçersiz.",
-  "validations.required_info": ({ name }: MessageParams) =>
+  "validations.required": ({ name }: MessageParams) =>
     `Lütfen ${name} giriniz.`,
   "validations.max_length": ({ name, length }: MessageParams) =>
     `${name} ${length} karakterden uzun olmamalı.`,

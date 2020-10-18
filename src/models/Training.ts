@@ -13,11 +13,11 @@ export interface ITraining extends Document {
 const trainingSchema = new Schema<ITraining>({
   title: {
     type: String,
-    required: [true, $("validations.required_info", { name: "başlık" })],
+    required: [true, $("validations.required", { name: "başlık" })],
   },
   description: {
     type: String,
-    required: [true, $("validations.required_info", { name: "tarif" })],
+    required: [true, $("validations.required", { name: "tarif" })],
   },
   tags: {
     type: [String],

@@ -21,7 +21,7 @@ const userSchema = new Schema<IUser>({
       30,
       $("validations.max_length", { length: 30, name: "İsminiz" }),
     ],
-    required: [true, $("validations.required_info", { name: "isminizi" })],
+    required: [true, $("validations.required", { name: "isminizi" })],
   },
   surname: {
     type: String,
@@ -29,19 +29,16 @@ const userSchema = new Schema<IUser>({
       30,
       $("validations.max_length", { length: 30, name: "Soyadınız" }),
     ],
-    required: [true, $("validations.required_info", { name: "soyadınızı" })],
+    required: [true, $("validations.required", { name: "soyadınızı" })],
   },
   email: {
     type: String,
     unique: true,
     index: true,
-    required: [
-      true,
-      $("validations.required_info", { name: "email adresinizi" }),
-    ],
+    required: [true, $("validations.required", { name: "email adresinizi" })],
     validate: {
       validator: isEmail,
-      message: $("validations.required_info", {
+      message: $("validations.required", {
         name: "geçerli Eposta adresi",
       }),
       isAsync: false,
@@ -57,7 +54,7 @@ const userSchema = new Schema<IUser>({
       30,
       $("validations.max_length", { length: 30, name: "Şifreniz" }),
     ],
-    required: [true, $("validations.required_info", { name: "şifrenizi" })],
+    required: [true, $("validations.required", { name: "şifrenizi" })],
   },
   type: {
     type: String,

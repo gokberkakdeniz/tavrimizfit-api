@@ -12,7 +12,7 @@ export interface IRecipe extends Document {
 const recipeSchema = new Schema<IRecipe>({
   title: {
     type: String,
-    required: [true, $("validations.required_info", { name: "başlığı" })],
+    required: [true, $("validations.required", { name: "başlığı" })],
   },
   tags: {
     type: [String],
@@ -20,11 +20,11 @@ const recipeSchema = new Schema<IRecipe>({
   },
   description: {
     type: String,
-    required: [true, $("validations.required_info", { name: "tarifi" })],
+    required: [true, $("validations.required", { name: "tarifi" })],
   },
   ingredients: {
     type: [String],
-    required: [true, $("validations.required_info", { name: "malzemeleri" })],
+    required: [true, $("validations.required", { name: "malzemeleri" })],
   },
   calorie: {
     type: String,
