@@ -1,23 +1,27 @@
-import { Document, model, Schema } from "mongoose";
+import { Document, model, Schema, Types } from "mongoose";
 import { UserRole } from "./User";
 import $ from "../messages";
 
 export interface ITraining extends Document {
   title: string;
   description: string;
-  media?: string[];
+  tutorials: Types.ObjectId[];
   tags?: string[];
   type: UserRole;
 }
 
-const trainingSchema = new Schema<ITraining>({
+const TrainingSchema = new Schema<ITraining>({
   title: {
     type: String,
     required: [true, $("validations.required", { name: "başlık" })],
   },
   description: {
     type: String,
-    required: [true, $("validations.required", { name: "tarif" })],
+    required: [true, $("validations.required", { name: "açıklama" })],
+  },
+  tutorials: {
+    type: [Types.ObjectId],
+    required: [true, $("validations.required", { name: "hareket" })],
   },
   tags: {
     type: [String],
@@ -29,6 +33,6 @@ const trainingSchema = new Schema<ITraining>({
   },
 });
 
-const trainingModel = model<ITraining>("Training", trainingSchema);
+const trainingModel = model<ITraining>("Training", TrainingSchema);
 
 export default trainingModel;

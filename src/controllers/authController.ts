@@ -24,7 +24,7 @@ const generateToken = (
     type,
   };
   const token = jwt.sign(data, process.env.TOKEN_SECRET, {
-    expiresIn: "1800s",
+    expiresIn: "1800h",
   });
   return token;
 };
@@ -34,7 +34,7 @@ export const login = (req: Request, res: Response): void => {
   if (email === undefined || password === undefined) {
     res.send({
       error: true,
-      message: $("validations.missing_email_or_name"),
+      message: $("validations.required", { name: "eposta ve şifre" }),
     });
   } else {
     User.findOne({ email })
@@ -53,7 +53,6 @@ export const login = (req: Request, res: Response): void => {
                 const token = generateToken(email, name, surname, type);
                 res.send({
                   error: false,
-                  message: $("success"),
                   token,
                 });
               } else {
@@ -98,10 +97,10 @@ export const register = (req: Request, res: Response): void => {
         message: $("success.added"),
       });
     })
-    .catch(() => {
+    .catch((err) => {
       res.send({
         error: true,
-        message: $("errors.unexpected"),
+        message: err.message,
       });
     });
 };

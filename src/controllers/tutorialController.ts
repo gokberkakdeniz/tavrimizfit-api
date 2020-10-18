@@ -1,14 +1,14 @@
 import { Response, Request } from "express";
-import Recipe, { IRecipe } from "../models/Recipe";
+import Tutorial, { ITutorial } from "../models/Tutorial";
 import $ from "../messages";
 import { extract } from "../helpers";
 
 export const read = (req: Request, res: Response): void => {
-  Recipe.findById({ _id: req.params.id })
-    .then((recipe) => {
+  Tutorial.findById({ _id: req.params.id })
+    .then((tutorial) => {
       res.send({
         error: false,
-        data: recipe,
+        data: tutorial,
       });
     })
     .catch((err: Error) => {
@@ -20,11 +20,11 @@ export const read = (req: Request, res: Response): void => {
 };
 
 export const readAll = async (req: Request, res: Response): Promise<void> => {
-  Recipe.find()
-    .then((recipes) => {
+  Tutorial.find()
+    .then((tutorials) => {
       res.send({
         error: false,
-        data: recipes,
+        data: tutorials,
       });
     })
     .catch((err: Error) => {
@@ -36,7 +36,7 @@ export const readAll = async (req: Request, res: Response): Promise<void> => {
 };
 
 export const remove = (req: Request, res: Response): void => {
-  Recipe.findByIdAndDelete(req.params.id)
+  Tutorial.findByIdAndDelete(req.params.id)
     .then(() => {
       res.send({
         error: false,
@@ -52,9 +52,16 @@ export const remove = (req: Request, res: Response): void => {
 };
 
 export const update = (req: Request, res: Response): void => {
-  const body = extract(req.body, "tags", "ingredients", "title", "description");
+  const body = extract(
+    req.body,
+    "type",
+    "tags",
+    "media",
+    "title",
+    "description"
+  );
 
-  Recipe.updateOne({ _id: req.params.id }, body)
+  Tutorial.updateOne({ _id: req.params.id }, body)
     .then(() => {
       res.send({
         error: false,
@@ -70,16 +77,16 @@ export const update = (req: Request, res: Response): void => {
 };
 
 export const create = (req: Request, res: Response): void => {
-  const { title, tags, description, ingredients, calorie } = req.body;
-  const recipe: IRecipe = new Recipe({
+  const { title, description, media, tags, type } = req.body;
+  const tutorial: ITutorial = new Tutorial({
     title,
-    tags,
     description,
-    ingredients,
-    calorie,
+    media,
+    tags,
+    type,
   });
 
-  recipe
+  tutorial
     .save()
     .then(() => {
       res.send({

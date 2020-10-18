@@ -3,8 +3,10 @@ import { validate as isEmail } from "email-validator";
 import bcrypt from "bcrypt";
 import $ from "../messages";
 
-const userRole = ["normal", "premium"] as const;
+const userRole = ["normal", "premium", "admin"] as const;
 export type UserRole = typeof userRole[number];
+
+const MAX_PASSWORD_LENGTH = 60;
 
 export interface IUser extends Document {
   name: string;
@@ -51,8 +53,11 @@ const userSchema = new Schema<IUser>({
       $("validations.min_length", { length: 8, name: "Şifreniz" }),
     ],
     maxlength: [
-      30,
-      $("validations.max_length", { length: 30, name: "Şifreniz" }),
+      MAX_PASSWORD_LENGTH,
+      $("validations.max_length", {
+        length: MAX_PASSWORD_LENGTH,
+        name: "Şifreniz",
+      }),
     ],
     required: [true, $("validations.required", { name: "şifrenizi" })],
   },
@@ -74,6 +79,34 @@ userSchema.pre("save", function (next) {
       .hash(user.password, 10)
       .then((hash) => {
         user.password = hash;
+        next();
+      })
+      .catch((err) => {
+        next(err);
+      });
+  }
+});
+
+// eslint-disable-next-line func-names
+userSchema.pre("updateOne", function (next) {
+  const { password } = this.getUpdate();
+
+  if (!password) {
+    next();
+  } else if (password.length > MAX_PASSWORD_LENGTH) {
+    next(
+      new Error(
+        $("validations.max_length", {
+          length: MAX_PASSWORD_LENGTH,
+          name: "Şifreniz",
+        })
+      )
+    );
+  } else {
+    bcrypt
+      .hash(password, 10)
+      .then((hash) => {
+        this.getUpdate().password = hash;
         next();
       })
       .catch((err) => {

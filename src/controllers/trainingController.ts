@@ -1,30 +1,40 @@
 import { Response, Request } from "express";
-import Recipe, { IRecipe } from "../models/Recipe";
+import Training, { ITraining } from "../models/Training";
+import Tutorial from "../models/Tutorial";
 import $ from "../messages";
 import { extract } from "../helpers";
 
 export const read = (req: Request, res: Response): void => {
-  Recipe.findById({ _id: req.params.id })
-    .then((recipe) => {
-      res.send({
-        error: false,
-        data: recipe,
-      });
+  Training.findById({ _id: req.params.id })
+    .then((training) => {
+      Tutorial.find({ _id: { $in: training.tutorials } })
+        .then((tutorials) => {
+          res.send({
+            error: false,
+            data: { ...training.toObject(), tutorials },
+          });
+        })
+        .catch((err: Error) => {
+          res.send({
+            error: true,
+            data: err.message,
+          });
+        });
     })
     .catch((err: Error) => {
       res.send({
         error: true,
-        message: err.message,
+        data: err.message,
       });
     });
 };
 
 export const readAll = async (req: Request, res: Response): Promise<void> => {
-  Recipe.find()
-    .then((recipes) => {
+  Training.find()
+    .then((trainings) => {
       res.send({
         error: false,
-        data: recipes,
+        data: trainings,
       });
     })
     .catch((err: Error) => {
@@ -36,7 +46,7 @@ export const readAll = async (req: Request, res: Response): Promise<void> => {
 };
 
 export const remove = (req: Request, res: Response): void => {
-  Recipe.findByIdAndDelete(req.params.id)
+  Training.findByIdAndDelete(req.params.id)
     .then(() => {
       res.send({
         error: false,
@@ -52,9 +62,16 @@ export const remove = (req: Request, res: Response): void => {
 };
 
 export const update = (req: Request, res: Response): void => {
-  const body = extract(req.body, "tags", "ingredients", "title", "description");
+  const body = extract(
+    req.body,
+    "title",
+    "description",
+    "tutorials",
+    "tags",
+    "type"
+  );
 
-  Recipe.updateOne({ _id: req.params.id }, body)
+  Training.updateOne({ _id: req.params.id }, body)
     .then(() => {
       res.send({
         error: false,
@@ -70,16 +87,16 @@ export const update = (req: Request, res: Response): void => {
 };
 
 export const create = (req: Request, res: Response): void => {
-  const { title, tags, description, ingredients, calorie } = req.body;
-  const recipe: IRecipe = new Recipe({
+  const { title, description, tutorials, tags, type } = req.body;
+  const training: ITraining = new Training({
     title,
-    tags,
     description,
-    ingredients,
-    calorie,
+    tutorials,
+    tags,
+    type,
   });
 
-  recipe
+  training
     .save()
     .then(() => {
       res.send({
