@@ -28,9 +28,13 @@ const permit = (...roles: Permission[]) => (
       token,
       process.env.TOKEN_SECRET as string,
       (err: Error, payload: ITokenPayload): unknown => {
+        if (err) {
+          return res.status(403).send(ACCESS_DENIED_MESSAGE);
+        }
+
         const { type, email } = payload;
 
-        if (err || !roles.includes(type)) {
+        if (!roles.includes(type)) {
           return res.status(403).send(ACCESS_DENIED_MESSAGE);
         }
 

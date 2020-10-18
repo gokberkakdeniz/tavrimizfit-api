@@ -6,7 +6,6 @@ const messages = {
 
 export type Message = keyof typeof messages;
 
-const $ = (message: Message): string =>
-  messages.hasOwnProperty(message) ? messages[message] : message;
+const $ = (message: Message): string => messages[message];
 
 export default $;
