@@ -1,25 +1,21 @@
 import { Response, Request } from "express";
 import Training, { ITraining } from "../models/Training";
-import Tutorial from "../models/Tutorial";
-import $ from "../messages";
 import { extract } from "../helpers";
+import $ from "../messages";
 
 export const read = (req: Request, res: Response): void => {
-  Training.findById({ _id: req.params.id })
+  Training.findById(req.params.id)
+    .populate({
+      path: "tutorials",
+      populate: {
+        path: "tutorials",
+      },
+    })
     .then((training) => {
-      Tutorial.find({ _id: { $in: training.tutorials } })
-        .then((tutorials) => {
-          res.send({
-            error: false,
-            data: { ...training.toObject(), tutorials },
-          });
-        })
-        .catch((err: Error) => {
-          res.send({
-            error: true,
-            data: err.message,
-          });
-        });
+      res.send({
+        error: false,
+        data: training,
+      });
     })
     .catch((err: Error) => {
       res.send({
@@ -31,6 +27,12 @@ export const read = (req: Request, res: Response): void => {
 
 export const readAll = async (req: Request, res: Response): Promise<void> => {
   Training.find()
+    .populate({
+      path: "tutorials",
+      populate: {
+        path: "tutorials",
+      },
+    })
     .then((trainings) => {
       res.send({
         error: false,

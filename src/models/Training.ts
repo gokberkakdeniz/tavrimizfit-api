@@ -19,10 +19,13 @@ const TrainingSchema = new Schema<ITraining>({
     type: String,
     required: [true, $("validations.required", { name: "açıklama" })],
   },
-  tutorials: {
-    type: [Types.ObjectId],
-    required: [true, $("validations.required", { name: "hareket" })],
-  },
+  tutorials: [
+    {
+      type: Types.ObjectId,
+      ref: "Tutorial",
+      required: [true, $("validations.required", { name: "hareket" })],
+    },
+  ],
   tags: {
     type: [String],
     default: [],
