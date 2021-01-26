@@ -1,7 +1,7 @@
 /* eslint-disable consistent-return */
 import { Request, Response } from "express";
 import jwt from "jsonwebtoken";
-import { ITokenPayload } from "../controllers/authController";
+import { ITokenPayload } from "../controllers/auth-controller";
 import User, { IUser, UserRole } from "../models/User";
 
 export type Permission = UserRole | "anonymous";

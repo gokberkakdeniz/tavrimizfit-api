@@ -2,12 +2,13 @@ import dotenv from "dotenv";
 import mongoose from "mongoose";
 import express from "express";
 
-import * as authController from "./controllers/authController";
-import * as userController from "./controllers/userController";
-import * as recipeController from "./controllers/recipeController";
-import * as tutorialController from "./controllers/tutorialController";
-import * as trainingController from "./controllers/trainingController";
-
+import {
+  authController,
+  recipeController,
+  trainingController,
+  tutorialController,
+  userController,
+} from "./controllers";
 import permit from "./middlewares/permit";
 
 dotenv.config();

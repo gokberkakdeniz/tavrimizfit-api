@@ -20,5 +20,10 @@
   "rules": {
     "no-debugger": "off",
     "no-console": 0
+  },
+  "settings": {
+    "import/parsers": {
+      "@typescript-eslint/parser": [".ts"]
+    }
   }
 }
