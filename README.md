@@ -1,6 +1,6 @@
 # tavrimizfit-api
 
-This is a fitness application api built using `express`, `mongoose` and `typescript` with my friend [@hakanalpp](https://github.com/hakanalpp).
+This is a fitness application api built using `express`, `mongoose` and `typescript`.
 
 ## Installation
 
