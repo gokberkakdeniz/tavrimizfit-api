@@ -2,6 +2,7 @@
   "name": "fitomer-api",
   "version": "1.0.0",
   "main": "index.js",
+  "license": "MIT",
   "private": true,
   "scripts": {
     "start": "nodemon --exec ts-node -T src/index.ts",
